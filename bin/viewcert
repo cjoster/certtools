@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PARAMS=1
+
+function _log {
+	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
+}
+
+function log {
+	_log "INFO: ${@:-UNKNOWN MESSAGE}"
+}
+
+function die {
+	_log "FATAL: ${@:-UNKNOWN ERROR}"
+	exit 1
+}
+
+function blank {
+	>&2 printf "\n"
+}
+
+function usage {
+	blank
+	_log "Usage:"
+	_log "       $(basename "${0}") certificate-file.pem"
+	_log "       $(basename "${0}") hostname[:port] [ sni-name ]"
+	_log "       $(basename "${0}") ip-address[:port] [ sni-name ]"
+	blank
+	_log "Port number is optional and will default to 443. Port may be specified"
+	_log "either numerically (e.g. 443) or symbolically (e.g. pop3s). This tool is"
+	_log "not smart enough to perform STARTTLS for such protocols."
+	blank
+	_log "In instances where you need to use a different SNI besides the hostname"
+	_log "specified for the connection--such as in cases where DNS is not"
+	_log "configured yet, a second hostname may be specified and will be used for"
+	_log "the TLS 1.2 server-name-indication field."
+}
+
+function param_die {
+	usage
+	blank
+	die "${@:-UNKNOWN ERROR}"
+}
+
+function help {
+	usage
+	exit 0
+}
+
+function have_binaries {
+	local errs=""
+	while [ -n "${1:-}" ]; do
+		if ! type -P "${1}" > /dev/null; then
+			[ -z "${errs}" ] && errs="${1}" || errs="${errs}, ${1}"
+		fi
+		shift
+	done
+	[ -z "${errs}" ] || die "Binaries required to run this script are missing: ${errs}"
+}
+
+[ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling Debubbing."; set -x; }
+
+have_binaries tty openssl
+
+interactive=1
+tty > /dev/null 2>&1 || interactive=0
+
+#if [ "${interactive}" -eq "0" ] && [ "${#@}" -lt "${PARAMS}" ]; then
+	
+[ "${#@}" -ge 1 ] || param_die "Argument expected."
+
+if [ -f "${1}" ]; then
+	ret=0
+	out="$(openssl x509 -inform PEM -in "${1}" -text -noout 2>/dev/null)" || ret="${?}"
+	if [ "${#out}" -le "0" ] || [ "${ret}" -ne "0" ]; then
+		ret=0
+		out="$(openssl x509 -inform DER -in "${1}" -text -noout 2>/dev/null)" || ret="${?}"
+	fi
+	err="The openssl tool did not understand the contents of \"${1}\" as either a PEM or DER encoded x509 certificate."
+else
+	host="$(echo "${1}" | cut -d: -f 1)"
+	[ -n "${host}" ] || die "Unable to extract host from \"${1}\"."
+	port=443
+	[ "${host}" == "${1}" ] || port="$(echo "${1}" | cut -d: -f 2)"
+	[ -n "${port}" ] || die "Unable to extract port from \"${1}\"."
+	if ! [ "$(expr "${port}" + 1 - 1 2>/dev/null)" == "${port}" ]; then # port is symbolic
+		[ -r /etc/services ] || die "Unable to lookup symbolic port name \"${port}\". /etc/services is missing or unreadable."
+		svc="${port}"
+		port="$(awk '$1=="'"${svc}"'"{print $2}' /etc/services | grep -E /tcp\$ | head -n 1 | cut -d/ -f 1)" || true
+		[ -n "${port}" ] || die "No port number could be looked up for service \"${svc}\"".
+	fi
+	[ "${port}" -gt 0 ] && [ "${port}" -le 65535 ] || die "Port number \"${port}\" is invalid."
+	sni="${2:-}"
+	[ -n "${sni}" ] || sni="${host}"
+	ret=0
+	out="$(echo -n "" | openssl s_client -connect "${host}:${port}" -servername "${sni}" 2>/dev/null| \
+		openssl x509 -text -noout 2>/dev/null)" || ret="${?}"
+	err="Unable to connect to \"${1}\" and extract a certificate."
+fi
+
+if [ "${#out}" -gt "0" ] && [ "${ret}" -eq "0" ]; then
+	printf "%s\n" "${out}" | "${PAGER:-less}"
+else
+	die "${err}"
+fi
+
+exit 0
