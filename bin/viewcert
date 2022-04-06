@@ -1,8 +1,6 @@
-#!/usr/bin/env bash
+#/usr/bin/env bash
 
 set -euo pipefail
-
-PARAMS=1
 
 function _log {
 	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
@@ -64,11 +62,6 @@ function have_binaries {
 
 have_binaries tty openssl
 
-interactive=1
-tty > /dev/null 2>&1 || interactive=0
-
-#if [ "${interactive}" -eq "0" ] && [ "${#@}" -lt "${PARAMS}" ]; then
-	
 [ "${#@}" -ge 1 ] || param_die "Argument expected."
 
 if [ -f "${1}" ]; then
