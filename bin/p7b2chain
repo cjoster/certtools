@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function log {
+	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
+}
+
+function die {
+	log "FATAL: ${@:-}"
+	exit 1
+}
+
+function usage {
+	local me="$(basename "${0}")"
+	log "Usage:"
+	log "         ${me} file.p7b"
+}
+
+function param_die {
+	usage
+	die "${@:-UNKNOWN ERROR}"
+}
+
+[ -z "${DEBUG+x}" ] || { log "DEBUG environment variable set. Enabling debugging."; set -x; }
+
+[ -n "${1:-}" ] || param_die "Parameter expected."
+[ -f "${1}" ] || param_die "File \"${1}\" not found."
+
+
+pkcs7="$(openssl pkcs7 -inform PEM -in "${1}" 2>/dev/null)" || true
+[ -n "${pkcs7}" ] || pkcs7="$(openssl pkcs7 -inform DER -in "${1}" 2>/dev/null)" || true
+[ -n "${pkcs7}" ] || die "Unable to load pkcs7 data from \"${1}\" in either PEM or DER format."
+
+printf "%s" "${pkcs7}" | openssl pkcs7 -print_certs | awk \
+	'BEGIN {
+			k = 0;
+			b = "";
+		}
+		k != 0 {
+			b = b "\n" $0;
+		}
+		/-----BEGIN CERTIFICATE-----/ {
+			b = $0;
+			k = 1;
+		}
+		/-----END CERTIFICATE-----/ {
+			k = 0;
+			print b;
+		}' \
+	|| die "Could not process pkcs7 data."
