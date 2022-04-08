@@ -20,11 +20,12 @@ function blank {
 }
 
 function usage {
+	local name="$(basename "${0}")"
 	blank
 	_log "Usage:"
-	_log "       $(basename "${0}") certificate-file.pem"
-	_log "       $(basename "${0}") hostname[:port] [ sni-name ]"
-	_log "       $(basename "${0}") ip-address[:port] [ sni-name ]"
+	_log "       ${name} certificate-file.pem"
+	_log "       ${name} hostname[:port] [ sni-name ]"
+	_log "       ${name}  ip-address[:port] [ sni-name ]"
 	blank
 	_log "Port number is optional and will default to 443. Port may be specified"
 	_log "either numerically (e.g. 443) or symbolically (e.g. pop3s). This tool is"
