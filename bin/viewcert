@@ -61,7 +61,7 @@ function have_binaries {
 
 [ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling Debubbing."; set -x; }
 
-have_binaries tty openssl
+have_binaries openssl
 
 [ "${#@}" -ge 1 ] || param_die "Argument expected."
 
