@@ -28,7 +28,7 @@ done
 [ -n "${outfile:-}" ] && [ -f "${outfile}" ] && [ "${force}" == "0" ] && die "Output file \"${outfile}\" exists. Refusing to continue. Use \"-f\" to force."
 have_binaries openssl
 
-key="$(openssl ecparam -genkey -name prime256v1 | openssl ec 2>/dev/null)" || die "Could not generate private key."
+key="$(generatekey 2>/dev/null)"
 
 output="subject:
   countryName: US
