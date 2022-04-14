@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
+
+function usage {
+	local name="$(basename "${0:-rekey}")"
+	_log "Usage:"
+	_log "         ${name} certfile.yaml"
+	blank
+	_log "Rekeys a certificate config file."
+}
+
+[ -n "${1:-}" ] || param_die "Argument expected."
+[ -f "${1}" -a -r "${1}" ] || param_die "File \"${1}\" doesn't exist or is unreadable."
+
+have_binaries yq openssl grep
+
+yq -e eval .privateKey "${1}" > /dev/null 2>&1 && die "Private key exists in \"${1}\". Manually delete or comment out the line beginning with \"privateKey:\" in \"${1}\". Refusing to continue."
+yq -e eval .certificateSigningRequwest "${1}" > /dev/null 2>&1 && die "Rekeying this file will invalide your certificate signing request. Delete or comment-out the \"certificateSigningRequest:\" line to continue."
+yq -e eval .certificate "${1}" > /dev/null 2>&1 && die "Rekeying this file will invalidate your certificate. Delete or comment-out the \"certificate:\" line to continue."
+
+cont="$(grep -Ev "^checksum: " "${1}")" || true
+
+[ -n "${cont}" ] || die "No content left in config file."
+
+echo "${cont}" > "${1}" || die "Unable to save modified file."
+echo "privateKey: $(openssl ecparam -genkey -name prime256v1 | openssl ec 2>/dev/null | base64 -w 0)" >> "${1}" || die "Failed to save private key to \"${1}\"."
