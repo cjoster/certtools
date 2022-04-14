@@ -48,4 +48,39 @@ function cleanup {
 	unset tmpdir
 }
 
+function generatekey {
+
+	have_binaries openssl
+
+	keyalg="${KEY_ALG:-rsa}"
+
+	case "${keyalg,,}" in
+		rsa)
+			bits="${KEY_BITS:-2048}"
+			ret=0
+			output="$(openssl genrsa "${bits}")" || ret="${?}"
+		;;
+		dsa)
+			bits="${KEY_BITS:-1024}"
+			ret=0
+			output="$(openssl dsaparam -genkey "${bits}")" && output="$(echo "${output}" | openssl dsa)" || ret="${?}"
+		;;
+	  ec|ecc)
+			curve="${KEY_CURVE:-prime256v1}"
+			ret=0
+			output="$(openssl ecparam -genkey -name "${curve}")" && output="$(echo "${output}" | openssl ec)" || ret="${?}" 
+		;;
+		*)
+			die "Unknown key algorithm in KEY_ALG environment variable: \"${KEY_ALG}\"."
+		;;
+	esac
+
+	if [ "${ret}" -eq "0" ]; then
+		printf "%s\n" "${output}"
+	else
+		blank
+		die "Key generation failed. Please check your KEY_ALG and KEY_BITS environment variables."
+	fi
+}
+
 trap cleanup EXIT
