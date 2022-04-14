@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function _log {
+	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
+}
+
+function log {
+	_log "INFO: ${@:-UNKNOWN MESSAGE}"
+}
+
+function die {
+	_log "FATAL: ${@:-UNKNOWN ERROR}"
+	exit 1
+}
+
+function blank {
+	>&2 printf "\n"
+}
+
+function usage {
+	local name="$(basename "${0}")"
+	local curves=""
+	if type -P openssl > /dev/null; then
+		curves="$(openssl ecparam -list_curves)"
+	else
+		curves="The openssl binary cannot be found. Cannot list supported curves."
+	fi
+	
+	blank
+	_log "Usage:"
+	_log "       ${name}"
+	blank
+	_log "Generates a private key and prints to standard out."
+	blank
+	_log "The environment variable KEY_ALG can be used to select"
+	_log "the public key algorithm. Valid options are \"RSA\","
+	_log "\"DSA\", and \"ECC\". The default is RSA."
+	blank
+	_log "The environment variable KEY_BITS can be use to specify"
+	_log "the number of bits for RSA and DSA keys. It defaults to"
+	_log "4096 and 1024 respectively."
+	blank
+	_log "For ECC curves, the variable KEY_CURVE can be use to"
+	_log "select the curve on which you'd like your key generated."
+	_log "The default is \"prime256v1\". Supported curves are:"
+	blank
+	_log "${curves}"
+	blank
+	_log "Environment variables can be set thusly:"
+	_log "    KEY_ALG=RSA KEY_BITS=4096 ${name}"
+
+	blank
+}
+
+function param_die {
+	usage
+	blank
+	die "${@:-UNKNOWN ERROR}"
+}
+
+function help {
+	usage
+	exit 0
+}
+
+function have_binaries {
+	local errs=""
+	while [ -n "${1:-}" ]; do
+		if ! type -P "${1}" > /dev/null; then
+			[ -z "${errs}" ] && errs="${1}" || errs="${errs}, ${1}"
+		fi
+		shift
+	done
+	[ -z "${errs}" ] || die "Binaries required to run this script are missing: ${errs}"
+}
+
+[ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling debugging."; set -x; }
+
+[ "${1:-}" != "-h" ] || help 
+
+have_binaries openssl
+
+keyalg="${KEY_ALG:-rsa}"
+
+case "${keyalg,,}" in
+	rsa)
+		bits="${KEY_BITS:-2048}"
+		ret=0
+		output="$(openssl genrsa "${bits}")" || ret="${?}"
+	;;
+	dsa)
+		bits="${KEY_BITS:-1024}"
+		ret=0
+		output="$(openssl dsaparam -genkey "${bits}")" && output="$(echo "${output}" | openssl dsa)" || ret="${?}"
+	;;
+  ec|ecc)
+		curve="${KEY_CURVE:-prime256v1}"
+		ret=0
+		output="$(openssl ecparam -genkey -name "${curve}")" && output="$(echo "${output}" | openssl ec)" || ret="${?}" 
+	;;
+	*)
+		die "Unknown key algorithm in KEY_ALG environment variable: \"${KEY_ALG}\"."
+	;;
+esac
+
+if [ "${ret}" -eq "0" ]; then
+	printf "%s\n" "${output}"
+else
+	blank
+	die "Key generation failed. Please check your KEY_ALG and KEY_BITS environment variables."
+fi
