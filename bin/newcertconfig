@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
+
+function usage {
+	local name="$(basename "${0:-mkcert}")"
+	_log "Usage:"
+	_log "         ${name} [ [ -f ] certfile.yaml ] | [ -h ]" 
+}
+
+force=0
+while [ -n "${1:-}" ]; do
+	p="${1}"; shift;
+	case "${p}" in
+		-h)
+			usage;
+			exit 0;
+		;;
+		-f)
+			force=1
+		;;
+		*)
+			outfile="${p}"
+	esac
+done
+
+[ -z "${outfile:-}" ] && [ "${force}" == "1" ] && die "Cannot force output if no output file specified."
+[ -n "${outfile:-}" ] && [ -f "${outfile}" ] && [ "${force}" == "0" ] && die "Output file \"${outfile}\" exists. Refusing to continue. Use \"-f\" to force."
+have_binaries openssl
+
+key="$(openssl ecparam -genkey -name prime256v1 | openssl ec 2>/dev/null)" || die "Could not generate private key."
+
+output="subject:
+  countryName: US
+  stateOrProvince: California
+  localityName: Palo Alto
+  organizationName: Internet Widgets Co, Ltd
+  organizationalUnitName: IT Department
+  email: itdept@iwidgetco.io
+hostnames:
+  - www.myserver.com
+  - mail.myserver.com
+ipaddrs:
+  - 1.2.3.4
+privateKey: $(echo "${key}" | base64 -w 0)"
+
+if [ -n "${outfile:-}" ]; then
+	ret=0
+	echo "${output}" >> "${outfile}" || die "Failed to save config to \"${outfile}\"."
+	log "Successfully saved certificate config yaml file to \"${outfile}\"." 
+else
+	echo "${output}"
+fi
