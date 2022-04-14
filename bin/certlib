@@ -27,6 +27,11 @@ function param_die {
 	die "${@:-UNKNOWN ERROR}"
 }
 
+function help {
+	[ "$(type -t usage 2>/dev/null)" != "function" ] && _log "No usage is provided by this script." || usage
+	exit 0
+}
+
 function have_binaries {
 	local errs=""
 	while [ -n "${1:-}" ]; do
