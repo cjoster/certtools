@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
+
+function usage {
+	local name="$(basename "${0:-getpkey}")"
+	_log "Usage:"
+	_log "         ${name} certfile.yaml"
+}
+
+[ -n "${1:-}" ] || param_die "Argument expected."
+[ -f "${1}" -a -r "${1}" ] || param_die "File \"${1}\" doesnn't exist or is unreadable."
+
+have_binaries yq
+
+key="$(yq -e eval .privateKey "${1}")" || die "Unable to extract privateKey from \"${1}\". Use \"rekey\" to fix."
+
+barekey="$(echo "${key}" | base64 -d)" || die "Decoding of key failed. Use \"rekey\" to generate a new key."
+
+echo "${barekey}"
