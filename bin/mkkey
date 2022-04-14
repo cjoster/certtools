@@ -20,7 +20,7 @@ function blank {
 }
 
 function usage {
-	local name="$(basename "${0}")"
+	local name="$(basename "${0:-mkkey}")"
 	local curves=""
 	if type -P openssl > /dev/null; then
 		curves="$(openssl ecparam -list_curves)"
@@ -40,7 +40,7 @@ function usage {
 	blank
 	_log "The environment variable KEY_BITS can be use to specify"
 	_log "the number of bits for RSA and DSA keys. It defaults to"
-	_log "4096 and 1024 respectively."
+	_log "2048 and 1024 respectively."
 	blank
 	_log "For ECC curves, the variable KEY_CURVE can be use to"
 	_log "select the curve on which you'd like your key generated."
