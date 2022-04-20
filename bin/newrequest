@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
+
+function usage {
+	local name="$(basename "${0:-mkkey}")"
+	_log "Usage:"
+	_log "       ${name} certconfig.yaml"
+	blank
+}
+
+have_binaries openssl yq tail sed grep
+
+[ -n "${1:-}" ] || param_die "Argument expected."
+[ "${1}" != "-h" ] || help 
+[ -r "${1}" ] || die "File \"${1}\" is not readable."
+[ -w "${1}" ] || die "File \"${1}\" is not writable."
+
+key="$(yq -e eval .privateKey "${1}" 2>/dev/null | base64 -d)" || die "Could not get private key from file \"${1}\". Use \`rekey\` to rekey the file." 
+
+tmpdir="$(mktemp -d /tmp/newrequest.XXXXXX)" || die "Could not create temporary directory."
+
+#cp "${1}" "${tmpdir}/yaml"
+
+defaultmd="$(yq -e eval .defaultDigest "${1}" 2>/dev/null)" || defaultmd=sha256
+
+openssl dgst -list | tail -n+2 | sed 's/[[:space:]]\+/\n/g' | grep -Ev '^[[:space:]]*$' | sed 's/^-//' | \
+grep -E '^'"${defaultmd}"'$' > /dev/null || die "Digest \"${defaultmd}\" is not supported by your copy of openssl. See \`openssl dgst -list\` for a list of supported digest algorithms."
+
+C="$(yq -e eval .subject.countryName "${1}" 2>/dev/null)" || C=""
+ST="$(yq -e eval .subject.stateOrProvince "${1}" 2>/dev/null)" || ST=""
+L="$(yq -e eval .subject.localityName "${1}" 2>/dev/null)" || L=""
+O="$(yq -e eval .subject.organizationName "${1}" 2>/dev/null)" || O=""
+OU="$(yq -e eval .subject.organizationalUnitName "${1}" 2>/dev/null)" || OU=""
+CN="$(yq -e eval .subject.commonName "${1}" 2>/dev/null)" || CN=""
+email="$(yq -e eval .subject.email "${1}" 2>/dev/null)" || email=""
+
+echo "[ req ]
+distinguished_name      = req_dn
+default_md              = ${defaultmd}
+req_extensions          = req_exts
+
+[ req_dn ]
+
+countryName                     = Country Name (2 letter code)
+stateOrProvinceName             = State or Province Name
+localityName                    = Locality Name
+0.organizationName              = Organization Name
+organizationalUnitName          = Organizational Unit Name
+commonName                      = Common Name
+emailAddress                    = Email Address (optional)
+
+countryName_default             = ${C}
+stateOrProvinceName_default     = ${ST}
+localityName_default            = ${L}
+0.organizationName_default      = ${O}
+organizationalUnitName_default  = ${OU}
+commonName_default              = ${CN}
+emailAddress_default            = ${email}
+
+[ req_exts ]
+
+basicConstraints                = critical, CA:false
+subjectKeyIdentifier            = hash
+keyUsage                        = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage                = critical, serverAuth, clientAuth, codeSigning, emailProtection, timeStamping, msCodeInd, msCodeCom, msCTLSign, msSGC, msEFS, nsSGC
+" >> "${tmpdir}/cnf"
+
+san=0
+name="foo"
+i=0
+while [ "${name}" != "null" ]; do
+	name="$(yq eval ".hostnames[${i}]" "${1}")"
+	if [ "${name}" != "null" ]; then
+		if [ "${san}" == "0" ]; then
+			echo -n "subjectAltName = " >> "${tmpdir}/cnf"
+			san=1
+		fi
+		echo -n "DNS:${name};" >> "${tmpdir}/cnf"
+	fi
+	i=$((i+1))
+done
+
+name="foo"
+i=0
+while [ "${name}" != "null" ]; do
+	name="$(yq eval ".ipaddrs[${i}]" "${1}")"
+	if [ "${name}" != "null" ]; then
+		if [ "${san}" == "0" ]; then
+			echo -n "subjectAltName = " >> "${tmpdir}/cnf"
+			san=1
+		fi
+		echo -n "IP:${name};" >> "${tmpdir}/cnf"
+	fi
+	i=$((i+1))
+done
+
+[ "${san}" == 0 ] || echo >> "${tmpdir}/cnf"
+
+echo "${key}" >> "${tmpdir}/key"
+#cat "${tmpdir}/cnf"
+openssl req -new -key "${tmpdir}/key" -config "${tmpdir}/cnf" -batch
+
