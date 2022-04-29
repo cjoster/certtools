@@ -1,40 +1,15 @@
 #!/usr/bin/env bash
 
-. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "fatal: unable to load function library."; exit 1; }
 
 function usage {
 	local name="$(basename "${0:-mkkey}")"
-	local curves=""
-	if type -P openssl > /dev/null; then
-		curves="$(openssl ecparam -list_curves)"
-	else
-		curves="The openssl binary cannot be found. Cannot list supported curves."
-	fi
 	
 	blank
 	_log "Usage:"
 	_log "       ${name}"
 	blank
-	_log "Generates a private key and prints to standard out."
-	blank
-	_log "The environment variable KEY_ALG can be used to select"
-	_log "the public key algorithm. Valid options are \"RSA\","
-	_log "\"DSA\", and \"ECC\". The default is RSA."
-	blank
-	_log "The environment variable KEY_BITS can be use to specify"
-	_log "the number of bits for RSA and DSA keys. It defaults to"
-	_log "2048 and 1024 respectively."
-	blank
-	_log "For ECC curves, the variable KEY_CURVE can be use to"
-	_log "select the curve on which you'd like your key generated."
-	_log "The default is \"prime256v1\". Supported curves are:"
-	blank
-	_log "${curves}"
-	blank
-	_log "Environment variables can be set thusly:"
-	_log "    KEY_ALG=RSA KEY_BITS=4096 ${name}"
-
-	blank
+  key_instructions
 }
 
 [ "${1:-}" != "-h" ] || help 
