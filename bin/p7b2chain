@@ -49,3 +49,5 @@ printf "%s" "${pkcs7}" | openssl pkcs7 -print_certs | awk \
 			print b;
 		}' \
 	|| die "Could not process pkcs7 data."
+
+exit 0

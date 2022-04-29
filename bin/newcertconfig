@@ -51,3 +51,5 @@ if [ -n "${outfile:-}" ]; then
 else
 	echo "${output}"
 fi
+
+exit 0

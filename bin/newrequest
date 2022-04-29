@@ -101,3 +101,4 @@ echo "${key}" >> "${tmpdir}/key"
 #cat "${tmpdir}/cnf"
 openssl req -new -key "${tmpdir}/key" -config "${tmpdir}/cnf" -batch
 
+exit 0

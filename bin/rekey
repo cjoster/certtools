@@ -29,3 +29,5 @@ echo "${cont}" > "${1}" || die "Unable to save modified file."
 echo "privateKey: ${key}" >> "${1}" || die "Failed to save private key to \"${1}\"."
 
 log "Successfully rekeyed \"${1}\"."
+
+exit 0

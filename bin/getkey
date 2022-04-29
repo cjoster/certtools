@@ -18,3 +18,5 @@ key="$(yq -e eval .privateKey "${1}")" || die "Unable to extract privateKey from
 barekey="$(echo "${key}" | base64 -d)" || die "Decoding of key failed. Use \"rekey\" to generate a new key."
 
 echo "${barekey}"
+
+exit 0
