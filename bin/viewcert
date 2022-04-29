@@ -1,5 +1,7 @@
 #/usr/bin/env bash
 
+set -euo pipefail
+
 . "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
 
 function usage {

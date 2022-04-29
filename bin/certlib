@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
-
 function _log {
 	>&2 printf "%s" "${@:-UNKNOWN MESSAGE}"
 	>&2 printf "\n"
