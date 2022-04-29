@@ -37,7 +37,7 @@ output="subject:
   localityName: Palo Alto
   organizationName: Internet Widgets Co, Ltd
   organizationalUnitName: IT Department
-  email: itdept@iwidgetco.io
+  #email: itdept@iwidgetco.io
 hostnames:
   - www.myserver.com
   - mail.myserver.com

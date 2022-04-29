@@ -47,7 +47,6 @@ stateOrProvinceName             = State or Province Name
 localityName                    = Locality Name
 0.organizationName              = Organization Name
 organizationalUnitName          = Organizational Unit Name
-commonName                      = Common Name
 emailAddress                    = Email Address (optional)
 
 countryName_default             = ${C}
@@ -55,7 +54,6 @@ stateOrProvinceName_default     = ${ST}
 localityName_default            = ${L}
 0.organizationName_default      = ${O}
 organizationalUnitName_default  = ${OU}
-commonName_default              = ${CN}
 emailAddress_default            = ${email}
 
 [ req_exts ]
