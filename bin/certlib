@@ -4,7 +4,8 @@ set -euo pipefail
 
 
 function _log {
-	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
+	>&2 printf "%s" "${@:-UNKNOWN MESSAGE}"
+	>&2 printf "\n"
 }
 
 function log {
