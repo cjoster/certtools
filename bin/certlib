@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-[ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling debugging."; set -x; }
 
 function _log {
 	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
@@ -84,3 +83,5 @@ function generatekey {
 }
 
 trap cleanup EXIT
+
+[ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling debugging."; set -x; }
