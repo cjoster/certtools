@@ -22,8 +22,6 @@ key="$(yq -e eval .privateKey "${1}" 2>/dev/null | base64 -d)" || die "Could not
 
 tmpdir="$(mktemp -d /tmp/newrequest.XXXXXX)" || die "Could not create temporary directory."
 
-#cp "${1}" "${tmpdir}/yaml"
-
 defaultmd="$(yq -e eval .defaultDigest "${1}" 2>/dev/null)" || defaultmd=sha256
 
 openssl dgst -list | tail -n+2 | sed 's/[[:space:]]\+/\n/g' | grep -Ev '^[[:space:]]*$' | sed 's/^-//' | \
