@@ -1,23 +1,6 @@
 #/usr/bin/env bash
 
-set -euo pipefail
-
-function _log {
-	>&2 printf "%s\n" "${@:-UNKNOWN MESSAGE}"
-}
-
-function log {
-	_log "INFO: ${@:-UNKNOWN MESSAGE}"
-}
-
-function die {
-	_log "FATAL: ${@:-UNKNOWN ERROR}"
-	exit 1
-}
-
-function blank {
-	>&2 printf "\n"
-}
+. "$(dirname "${BASH_SOURCE[0]}")/certlib" || { >&2 echo "FATAL: Unable to load function library."; exit 1; }
 
 function usage {
 	local name="$(basename "${0}")"
@@ -36,30 +19,6 @@ function usage {
 	_log "configured yet, a second hostname may be specified and will be used for"
 	_log "the TLS 1.2 server-name-indication field."
 }
-
-function param_die {
-	usage
-	blank
-	die "${@:-UNKNOWN ERROR}"
-}
-
-function help {
-	usage
-	exit 0
-}
-
-function have_binaries {
-	local errs=""
-	while [ -n "${1:-}" ]; do
-		if ! type -P "${1}" > /dev/null; then
-			[ -z "${errs}" ] && errs="${1}" || errs="${errs}, ${1}"
-		fi
-		shift
-	done
-	[ -z "${errs}" ] || die "Binaries required to run this script are missing: ${errs}"
-}
-
-[ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling Debubbing."; set -x; }
 
 have_binaries openssl
 
