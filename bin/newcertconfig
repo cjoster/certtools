@@ -26,7 +26,8 @@ done
 
 [ -z "${outfile:-}" ] && [ "${force}" == "1" ] && die "Cannot force output if no output file specified."
 [ -n "${outfile:-}" ] && [ -f "${outfile}" ] && [ "${force}" == "0" ] && die "Output file \"${outfile}\" exists. Refusing to continue. Use \"-f\" to force."
-have_binaries openssl
+
+have_binaries base64
 
 key="$(generatekey 2>/dev/null)"
 
