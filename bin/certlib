@@ -84,17 +84,17 @@ function generatekey {
 		rsa)
 			bits="${KEY_BITS:-2048}"
 			ret=0
-			output="$(openssl genrsa "${bits}")" || ret="${?}"
+			output="$([ "${bits}" -gt "2048" ] || exec 2>/dev/null; openssl genrsa "${bits}")" || ret="${?}"
 		;;
 		dsa)
 			bits="${KEY_BITS:-1024}"
 			ret=0
-			output="$(openssl dsaparam -genkey "${bits}")" && output="$(echo "${output}" | openssl dsa)" || ret="${?}"
+			output="$(openssl dsaparam -genkey "${bits}" 2>/dev/null)" && output="$(echo "${output}" | openssl dsa 2>/dev/null)" || ret="${?}"
 		;;
 	  ec|ecc)
 			curve="${KEY_CURVE:-prime256v1}"
 			ret=0
-			output="$(openssl ecparam -genkey -name "${curve}")" && output="$(echo "${output}" | openssl ec)" || ret="${?}" 
+			output="$(openssl ecparam -genkey -name "${curve}" 2>/dev/null)" && output="$(echo "${output}" | openssl ec 2>/dev/null)" || ret="${?}" 
 		;;
 		*)
 			die "Unknown key algorithm in KEY_ALG environment variable: \"${KEY_ALG}\"."
