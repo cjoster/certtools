@@ -31,12 +31,6 @@ have_binaries openssl
 
 [ -n "${1:-}" ] || param_die "Argument expected."
 
-cert="$(retrieve_cert "${1}")" || die "Unable to retrieve certificate from \"${1}\"."
-
-printf "%s\n" "${cert}" | openssl x509 -text -noout | if tty > /dev/null 2>&1; then
-	"${PAGER:-less}"
-else
-	cat
-fi
+retrieve_cert "${1}"
 
 exit 0

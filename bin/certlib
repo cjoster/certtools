@@ -109,6 +109,55 @@ function generatekey {
 	fi
 }
 
+function retrieve_cert {
+
+	[ -n "${1}" ] || die "$0: argument expected"
+
+	have_binaries openssl
+
+	if [ "${1}" == "-" -o -f "${1}" ]; then
+		if [ "${1}" == "-" ]; then
+			f="STDIN"
+			input="$(cat)" || die "Error swallowing input on stdin."
+			[ -n "${input}" ]  || die "No input received on stdin."
+		elif input="$(yq eval .certificate "${1}" 2>/dev/null| base64 -d)"; then
+			f=".certificate in yaml config file \"${1}\""
+		else
+			f="\"${1}\""
+			input="$(cat "${1}")"
+		fi
+		
+		if ! cert="$(echo "${input}" | openssl x509 -inform PEM)"; then
+			if ! cert="$(echo "${input}" | openssl x509 -inform DER)"; then
+				die "Openssl could not identify the contets of ${f} as either a PEM encoded or DER encoded certificate."
+			fi
+		fi
+		[ -n "${cert}" ] || die "No certificate found."
+	else
+		host="$(echo "${1}" | cut -d: -f 1)"
+		[ -n "${host}" ] || die "Unable to extract host from \"${1}\"."
+		port=443
+		[ "${host}" == "${1}" ] || port="$(echo "${1}" | cut -d: -f 2)"
+		[ -n "${port}" ] || die "Unable to extract port from \"${1}\"."
+		if ! [ "$(expr "${port}" + 1 - 1 2>/dev/null)" == "${port}" ]; then # port is symbolic
+			[ -r /etc/services ] || die "Unable to lookup symbolic port name \"${port}\". /etc/services is missing or unreadable."
+			svc="${port}"
+			port="$(awk '$1=="'"${svc}"'"{print $2}' /etc/services | grep -E /tcp\$ | head -n 1 | cut -d/ -f 1)" || true
+			[ -n "${port}" ] || die "No port number could be looked up for service \"${svc}\"".
+		fi
+		[ "${port}" -gt 0 ] && [ "${port}" -le 65535 ] || die "Port number \"${port}\" is invalid."
+		sni="${2:-}"
+		[ -n "${sni}" ] || sni="${host}"
+		ret=0
+		cert="$(echo -n "" | openssl s_client -connect "${host}:${port}" -servername "${sni}" 2>/dev/null| \
+			openssl x509 2>/dev/null)" || die "Unable to connect to \"${1}\" and extract a certificate."
+	fi
+
+	printf "%s\n" "${cert}"
+
+	return 0
+}
+
 trap cleanup EXIT
 
 [ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling debugging."; set -x; }
