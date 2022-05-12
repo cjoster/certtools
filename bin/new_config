@@ -31,7 +31,7 @@ done
 
 have_binaries base64
 
-key="$(generatekey 2>/dev/null)"
+key="$(generatekey 2>/dev/null)" || die "Could not generate private key."
 
 output="subject:
   countryName: US
