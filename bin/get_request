@@ -24,8 +24,14 @@ tmpdir="$(mktemp -d /tmp/newrequest.XXXXXX)" || die "Could not create temporary 
 
 defaultmd="$(yq -e eval .defaultDigest "${1}" 2>/dev/null)" || defaultmd=sha256
 
-openssl dgst -list | tail -n+2 | sed 's/[[:space:]]\+/\n/g' | grep -Ev '^[[:space:]]*$' | sed 's/^-//' | \
-grep -E '^'"${defaultmd}"'$' > /dev/null || die "Digest \"${defaultmd}\" is not supported by your copy of openssl. See \`openssl dgst -list\` for a list of supported digest algorithms."
+if [ "$(uname)" == "Darwin" ]; then
+	cmd="openssl list-message-digest-commands"
+else
+	cmd="openssl dgst -list"
+fi
+
+${cmd} | tail -n+2 | sed 's/[[:space:]]\+/\n/g' | grep -Ev '^[[:space:]]*$' | sed 's/^-//' | \
+grep -E '^'"${defaultmd}"'$' > /dev/null || die "Digest \"${defaultmd}\" is not supported by your copy of openssl. See \`${cmd}\` for a list of supported digest algorithms."
 
 C="$(yq -e eval .subject.countryName "${1}" 2>/dev/null)" || C=""
 ST="$(yq -e eval .subject.stateOrProvince "${1}" 2>/dev/null)" || ST=""
