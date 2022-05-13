@@ -158,6 +158,11 @@ function retrieve_cert {
 	return 0
 }
 
+function base64 {
+	have_binaries openssl
+	openssl base64 | tr -d '\n'
+}
+
 trap cleanup EXIT
 
 [ -z "${DEBUG+x}" ] || { _log "DEBUG environment variable set. Enabling debugging."; set -x; }
