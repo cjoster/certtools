@@ -21,7 +21,9 @@ yq -e eval .privateKey "${1}" > /dev/null 2>&1 && die "Private key exists in \"$
 yq -e eval .certificateSigningRequwest "${1}" > /dev/null 2>&1 && die "Rekeying this file will invalide your certificate signing request. Delete or comment-out the \"certificateSigningRequest:\" line to continue."
 yq -e eval .certificate "${1}" > /dev/null 2>&1 && die "Rekeying this file will invalidate your certificate. Delete or comment-out the \"certificate:\" line to continue."
 
-key="$(generatekey 2>/dev/null | base64 -w 0)" || die "Unable to generate new key."
+[ "$(uname)" == "Darwin" ] && b64cmd="base64" || b64cmd="base64 -w 0"
+
+key="$(generatekey 2>/dev/null | ${b64cmd})" || die "Unable to generate new key."
 
 cont="$(grep -Ev "^checksum: " "${1}")" || true
 

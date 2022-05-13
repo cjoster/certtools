@@ -33,6 +33,8 @@ have_binaries base64
 
 key="$(generatekey 2>/dev/null)" || die "Could not generate private key."
 
+[ "$(uname)" == "Darwin" ] && b64cmd="base64" || b64cmd="base64 -w 0"
+
 output="subject:
   countryName: US
   stateOrProvince: California
@@ -45,7 +47,7 @@ hostnames:
   - mail.myserver.com
 ipaddrs:
   - 1.2.3.4
-privateKey: $(echo "${key}" | base64 -w 0)"
+privateKey: $(echo "${key}" | ${b64cmd})"
 
 if [ -n "${outfile:-}" ]; then
 	ret=0
