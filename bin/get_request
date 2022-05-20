@@ -8,7 +8,6 @@ function usage {
 	local name="$(basename "${0:-mkkey}")"
 	_log "Usage:"
 	_log "       ${name} certconfig.yaml"
-	blank
 }
 
 have_binaries openssl yq tail sed grep
