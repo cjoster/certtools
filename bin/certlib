@@ -113,7 +113,7 @@ function retrieve_cert {
 
 	[ -n "${1}" ] || die "$0: argument expected"
 
-	have_binaries openssl yq
+	have_binaries openssl
 
 	if [ "${1}" == "-" -o -f "${1}" ]; then
 		if [ "${1}" == "-" ]; then
