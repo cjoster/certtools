@@ -65,8 +65,8 @@ emailAddress_default            = ${email}
 
 basicConstraints                = critical, CA:false
 subjectKeyIdentifier            = hash
-keyUsage                        = critical, nonRepudiation, digitalSignature, keyEncipherment
-extendedKeyUsage                = critical, serverAuth, clientAuth, codeSigning, emailProtection, timeStamping, msCodeInd, msCodeCom, msCTLSign, msSGC, msEFS, nsSGC
+keyUsage                        = critical, digitalSignature, keyEncipherment
+extendedKeyUsage                = critical, serverAuth
 " >> "${tmpdir}/cnf"
 
 san=0
