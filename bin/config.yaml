@@ -1,0 +1,9 @@
+    development:
+      adapter: mysql2
+      encoding: utf8
+      database: my_database
+      username: root
+      password:
+      apt:
+        - somepackage
+        - anotherpackage
