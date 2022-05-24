@@ -27,8 +27,6 @@ function usage {
 	_log "the TLS 1.2 server-name-indication field."
 }
 
-have_binaries openssl
-
 [ -n "${1:-}" ] || param_die "Argument expected."
 
 retrieve_cert "${1}"

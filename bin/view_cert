@@ -27,10 +27,9 @@ function usage {
 	_log "the TLS 1.2 server-name-indication field."
 }
 
-have_binaries openssl
-
 [ -n "${1:-}" ] || param_die "Argument expected."
 
+# retrieve_cert will check for openssl for us
 cert="$(retrieve_cert "${1}")" || die "Unable to retrieve certificate from \"${1}\"."
 
 tty > /dev/null 2>&1 && pager="${PAGER:-less}" || pager="cat"
