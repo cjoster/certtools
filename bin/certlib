@@ -120,7 +120,7 @@ function retrieve_cert {
 			f="STDIN"
 			input="$(cat)" || die "Error swallowing input on stdin."
 			[ -n "${input}" ]  || die "No input received on stdin."
-		elif input="$(yq eval .certificate "${1}" 2>/dev/null| base64 -d)"; then
+		elif input="$(yq eval -e .certificate "${1}" 2>/dev/null| base64 -d)"; then
 			f=".certificate in yaml config file \"${1}\""
 		else
 			f="\"${1}\""
