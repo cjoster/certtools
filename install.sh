@@ -18,7 +18,6 @@ function install_bins {
 
 [ -z "${DEBUG+x}" ] || { >&2 echo "DEBUG environment variable set. Enabling debugging."; set -x; }
 
-
 ppath="/usr/local/bin:${PATH}"
 
 i=1
