@@ -29,6 +29,6 @@ function usage {
 
 [ -n "${1:-}" ] || param_die "Argument expected."
 
-retrieve_cert "${1}"
+retrieve_cert "${@}"
 
 exit 0
