@@ -85,6 +85,7 @@ function generatekey {
 			bits="${KEY_BITS:-2048}"
 			ret=0
 			output="$([ "${bits}" -gt "2048" ] || exec 2>/dev/null; openssl genrsa "${bits}")" || ret="${?}"
+			tmp="$(echo "${output}" | openssl rsa -traditional 2>/dev/null)" && output="${tmp}" || true
 		;;
 		dsa)
 			bits="${KEY_BITS:-1024}"
