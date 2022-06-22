@@ -84,3 +84,17 @@ openssl s_client -connect vmware.com:443 -servername vmware.com < /dev/null | op
 ```
 
 # <a name="easy"></a> Viewing Certificates (the easy way)
+
+There is a tool in the `/bin` directory that will display the plain-text certificate information of
+a file (PEM or DER) encoded, a YAML config file, or a service on the internet.
+
+```bash
+view_cert vmware.com
+```
+
+View the help for the tool:
+
+```bash
+view_cert -h
+```
+
