@@ -29,6 +29,8 @@ function usage {
 
 [ -n "${1:-}" ] || param_die "Argument expected."
 
+[ "${1}" != "-h" ] || { usage; exit 0; }
+
 # retrieve_cert will check for openssl for us
 cert="$(retrieve_cert "${@}")" || die "Unable to retrieve certificate from \"${1}\"."
 
