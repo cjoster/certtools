@@ -20,11 +20,11 @@ organizationalUnitName_default  = Tanzu Labs
 commonName_default              = Tanzu Labs Demo CA
 
 [ ca_req_ext ]
-basicConstraints = critical, CA:true
+basicConstraints = critical, CA:true, pathlen:1
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 
 [ ca_ext ]
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always,issuer
-basicConstraints = critical, CA:true
+basicConstraints = critical, CA:true, pathlen:1
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
