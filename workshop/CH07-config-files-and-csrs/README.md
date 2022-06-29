@@ -28,15 +28,19 @@ organizationalUnitName_default  = Tanzu Labs
 commonName_default              = www.myserver.com
 
 [ req_ext ]
-basicConstraints = critical, CA:false
-keyUsage = critical, digitalSignature, keyEncipherment
-extendedKeyUsage = serverAuth
-subjectKeyIdentifier = hash
+# A critical extension means that the requester or certificate authority
+# has requested that any entity that is attempting to verify the certificate
+# must understand and implement the extension or must fail verification
+basicConstraints 	= critical,	CA:false
+keyUsage		= 		digitalSignature, keyEncipherment
+extendedKeyUsage 	=		serverAuth
+subjectKeyIdentifier	=		hash
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = mail.myserver.com
-DNS.2 = *.otherserver.com
+DNS.1 = www.myserver.com
+DNS.2 = mail.myserver.com
+DNS.3 = *.otherserver.com
 # IP addresses are frowned upon in certs, but some like to do it
 # the problem is that they put them in as DNS entries
 IP = 1.2.3.4
