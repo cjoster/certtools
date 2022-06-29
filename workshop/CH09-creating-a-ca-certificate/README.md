@@ -7,7 +7,7 @@ KEY_ALG=ecc new_key > CA.key
 ## Create a certificate signing request for the CA (this process can be skipped)
 
 ```bash
-openssl req -new -key CA>key -config CA.cnf -out CA.csr -batch -reqexts ca_req_ext
+openssl req -new -key CA.key -config CA.cnf -out CA.csr -batch -reqexts ca_req_ext
 ```
 
 ## Look at your CSR and make sure it's what you want
@@ -59,3 +59,35 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout CA.key 
 
 ```bash
 openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -days 36500 -config CA.cnf -extensions ca_ext -batch -nodes -text
+```
+
+# Signing a csr with your CA
+
+### Make a directory for your certs
+
+You'll need to keep all of the certificates you issue so that if you ever need to revoke one, you have it to revoke.
+
+```bash
+mkdir -p certs
+```
+
+### Generate a serial number
+
+Serial numbers used to be sequential and meaningful. These days, most all CA's issue random 16-20 byte serial numbers.
+
+```bash
+serial=$(dd if=/dev/random bs=18 count=1 iflag=fullblock 2>/dev/null | xxd -p)
+```
+
+### Sign the CSR
+
+```bash
+openssl x509 -req -in site.csr -key CA.key -extfile CA.cnf -extensions cert_ext -days 365 -set_serial "0x${serial}" -copy_extensions copy > "certs/${serial}.crt"
+```
+
+### View your certificate
+
+```bash
+openssl x509 -in "certs/$serial.crt -text
+```
+```
