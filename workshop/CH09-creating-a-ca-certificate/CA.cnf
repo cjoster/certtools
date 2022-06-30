@@ -21,7 +21,8 @@ commonName_default              = Tanzu Labs Demo CA
 
 
 [ ca_req_ext ]
-basicConstraints = critical, CA:true, pathlen:1
+subjectKeyIdentifier = hash
+basicConstraints = critical, CA:true, pathlen:0
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 
 [ ca_ext ]
