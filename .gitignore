@@ -1,2 +1,11 @@
+workshop/APPENDIX-A/test.cnf
+workshop/APPENDIX-A/test.csr
+workshop/APPENDIX-A/test.key
+workshop/CH07-config-files-and-csrs/site.csr
+workshop/CH09-creating-a-ca-certificate/CA.crt
+workshop/CH09-creating-a-ca-certificate/CA.csr
+workshop/CH09-creating-a-ca-certificate/CA.key
+workshop/CH09-creating-a-ca-certificate/foo.crt
+workshop/CH09-creating-a-ca-certificate/site.csr
 *.swp
 *.swo
