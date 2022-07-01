@@ -83,6 +83,43 @@ echo -n "" | openssl s_client -connect vmware.com:443 -servername vmware.com | o
 openssl s_client -connect vmware.com:443 -servername vmware.com < /dev/null | openssl x509 -text -noout | less
 ```
 
+### SNI Explained
+
+Server Name Indication (SNI) is a header that is set in the TLS client-hello segment of the initial TLS handshake.
+It's how the modern web ~~continues to idiotically double down on IPv4~~ efficiently makes use of IP addresses. If
+you connect to an IP address alone, and it's some kind of load-balancer, the SNI is how the load-balancer figures out
+where to route the traffic. It's how Contour/Envoy work. It's how AWS ALB's work. It's how the web works.
+
+So, here's an example. No affiliation, just Wix was the first load balancer I could find that refuses to present
+a certificate if no SNI is present. Also, the websites are meaningless...simply examples taken from Wix's blog.
+
+```bash
+dig +short animalmusicweb.com
+```
+
+Which returns `185.230.63.186` (at least it did when this was written) as the IP address. But look what
+happens when we connect just to the IP address
+
+```bash
+openssl s_client -connect 185.230.63.186:443 < /dev/null
+```
+
+...you don't get a certificate.
+
+But, give it a hostname:
+
+```bash
+openssl s_client -connect 185.230.63.186:443 -servername animalmusicweb.com < /dev/null
+```
+
+And you'll see a certificate with a SubjectAltName for animalmusicweb.com.
+
+Now try a different one.
+
+```bash
+openssl s_client -connect 185.230.63.186:443 -servername www.ravin.ai < /dev/null
+```
+
 # <a name="easy"></a> Viewing Certificates (the easy way)
 
 There is a tool in the `/bin` directory that will display the plain-text certificate information of
@@ -98,3 +135,8 @@ View the help for the tool:
 view_cert -h
 ```
 
+SNI example
+
+```bash
+view_cert 185.230.63.186 www.ravin.ai
+```
