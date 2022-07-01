@@ -1,4 +1,4 @@
-# Generatinig Keys
+# Generating Keys
 
 **If you let your CA create your keys, you are already compromised.**
 
@@ -21,7 +21,7 @@ both use ECC keys on their publicly facing sites.
 openssl genrsa 2048 
 ```
 
-Some time recently, openssl was updateded to produce PKCS#8 formatted
+Some time recently, openssl was updated to produce PKCS#8 formatted
 keys. The usability of these will vary depending on where you're trying
 to use them. If the output you get from `genrsa` looks like this:
 
@@ -43,7 +43,7 @@ openssl genrsa 2048 -traditional
 ## Generating DSA keys
 
 DSA keys (as well as ECC keys) require parameters to be generated first,
-befor the key can be created. This process can be done separately, or in
+before the key can be created. This process can be done separately, or in
 a single command.
 
 ### Generate DSA parameters
@@ -98,7 +98,7 @@ openssl dsaparm -noout -genkey 1024 | openssl pkcs8 -nocrypt -traditional
 Start by getting a list of curves your implementation of openssl supports.
 
 ### NOTE:
-On MacOS and other BDS variants, this will be MUCH larger than available curves
+On MacOS and other BSD variants, this will be MUCH larger than available curves
 on Linux.
 
 ```bash

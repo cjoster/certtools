@@ -47,7 +47,7 @@ IP = 1.2.3.4
 ```
 
 Save this file as `site.cnf`, and create your certificate signing request
-from the configfile as follows:
+from the config file as follows:
 
 ```bash
 openssl req -new -key site.key -config site.cnf -batch -out site.csr

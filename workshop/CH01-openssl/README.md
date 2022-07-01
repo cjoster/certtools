@@ -1,7 +1,7 @@
 # OpenSSL
 
-OpenSSL is the swis-army-knife of cryptographic systems. Each it has a modular sub-command mechanism where
-by you specify the subcommand immediately after the `openssl` command.
+OpenSSL is the Swiss-army-knife of cryptographic systems. Each it has a modular sub-command mechanism where
+by you specify the sub-command immediately after the `openssl` command.
 
 ## Useful OpenSSL modules
 
@@ -23,7 +23,7 @@ by you specify the subcommand immediately after the `openssl` command.
 | `verify` | Used to manually verify certificates. |
 
 \* `genpkey` can technically generate any private key using any supported algorithm, but
-its systax is clunky. It is, however, really the only way to generate more obscure EC keys,
+its syntax is clunky. It is, however, really the only way to generate more obscure EC keys,
 like curve 25519, ED448, etc.
 
 ## Documentation
@@ -31,8 +31,8 @@ like curve 25519, ED448, etc.
 ### Linux
 
 On Linux systems, getting at the documentation for OpenSSL sub-commands is done two ways. On older distributions
-you run `man <subcommand>`; e.g. `man genrsa`. The command `man openssl` will give you a list of the subcommands.
-On more recent releases of Linux distrubitions, this mechanism has moved to `man openssl-genrsa` and the
+you run `man <subcommand>`; e.g. `man genrsa`. The command `man openssl` will give you a list of the sub-commands.
+On more recent releases of Linux distributions, this mechanism has moved to `man openssl-genrsa` and the
 man page of `genrsa` takes you to the main OpenSSL man page.
 
 ### MacOS
