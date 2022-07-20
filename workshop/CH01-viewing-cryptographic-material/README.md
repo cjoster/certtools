@@ -5,7 +5,7 @@ the object in plain text. This is useful to check things like expiration date,
 issuer, subject-alternative-names and the like. As an example, take a look at the certificate
 in this directory:
 
-## Viewing a Certificate
+## <a name="hard"></a> Viewing a Certificate (the hard way)
 
 ```bash
 openssl x509 -in vmware.com.crt -text -noout
@@ -82,3 +82,5 @@ echo -n "" | openssl s_client -connect vmware.com:443 -servername vmware.com | o
 # -OR-
 openssl s_client -connect vmware.com:443 -servername vmware.com < /dev/null | openssl x509 -text -noout | less
 ```
+
+# <a name="easy"></a> Viewing Certificates (the easy way)
