@@ -97,5 +97,5 @@ openssl x509 -in "certs/${issued}-${serial}.crt" -text -noout
 **Note** More recent versions of OpenSSL have cleaner ways to do this.
 
 ```bash
-openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -CA CA.crt -CAkey CA.key
+openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -CA CA.crt -CAkey CA.key -extfile CA.cnf -extensions cert_ext -copy_extensions copy
 ```
