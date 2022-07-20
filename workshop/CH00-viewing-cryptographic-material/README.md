@@ -17,6 +17,9 @@ printing the PEM-encoded certificate is not important.
 
 ## Viewing a private key
 
+Likewise, there's a `-text` and a `-noout` flag for the `rsa` command to view
+a private key. This is only so useful but it is included here for completeness.
+
 ```bash
 openssl rsa -in example.key -text -noout
 ```
@@ -51,7 +54,7 @@ openssl s_client -connect google.com:443 -servername google.com
 Pay particular attention to the `-servername` flag. While we used the hostname to lookup the address and
 make the connection, you could very easily have just used an IP address in cases where, for example, when DNS is not setup yet
 or not setup correctly. This flag let's you set the SNI field in the TLS 1.2+ hello message so that L4+ loadbalancers
-can do their thing correctly (thing HTTPProxies in contour/envoy).
+can do their thing correctly (think HTTPProxies in contour/envoy).
 
 If you want to issue a request, you can simply type it in here. Note that there are TWO carriage returns in a
 row at the end--this signifies the termination of the request headers.
@@ -66,7 +69,7 @@ Host: www.google.com
 
 ### Putting it all together
 
-You can stop the `s\_client` command from expecting input from the terminal by disrupting its standard in. This
+You can stop the `s_client` command from expecting input from the terminal by disrupting its standard in. This
 can be done one of two ways. Either `echo |`--although I like to not send it anything, not even the carriage return,
 and I also like to explicitly put the empty string `""` in that echo as well so that it is entirely explicit what it
 is doing.
