@@ -33,7 +33,7 @@ can get it with the following command (in American digit groupings):
 
 ## Viewing a certificate signing request before sending it to your CA
 
-It's always a good idea to double check your CSR to make sure it has everyting in it you want before sending
+It's always a good idea to double check your CSR to make sure it has everything in it you want before sending
 it to a possibly money-costing certificate authority. After generating a CSR, you can check it with:
 
 ```bash
@@ -42,8 +42,8 @@ openssl req -in example.csr -text -noout
 
 ## Viewing a live certificate on the internet
 
-The `openssl` command has a very handly `s_client` subcommand. It's short for "secure client"
-and allows you to connect to a network resource and issue requests by hand--if you've evern `telnet`'ed to
+The `openssl` command has a very handy `s_client` sub-command. It's short for "secure client"
+and allows you to connect to a network resource and issue requests by hand--if you've ever `telnet`'ed to
 a web server and issue a request (or any other plain-text resource), this is the way to do
 it via TLS.
 
@@ -53,7 +53,7 @@ openssl s_client -connect google.com:443 -servername google.com
 
 Pay particular attention to the `-servername` flag. While we used the hostname to lookup the address and
 make the connection, you could very easily have just used an IP address in cases where, for example, when DNS is not setup yet
-or not setup correctly. This flag let's you set the SNI field in the TLS 1.2+ hello message so that L4+ loadbalancers
+or not setup correctly. This flag let's you set the SNI field in the TLS 1.2+ hello message so that L4+ load-balancers
 can do their thing correctly (think HTTPProxies in contour/envoy).
 
 If you want to issue a request, you can simply type it in here. Note that there are TWO carriage returns in a

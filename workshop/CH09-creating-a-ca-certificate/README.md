@@ -61,7 +61,7 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout CA.key 
 openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -days 36500 -config CA.cnf -extensions ca_ext -batch -nodes -text
 ```
 
-# Signing a csr with your CA
+# Signing a CSR with your CA
 
 ### Make a directory for your certs
 

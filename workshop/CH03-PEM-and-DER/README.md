@@ -1,4 +1,4 @@
-## Champter 1 - Formats: PEM and DER
+## Chapter 1 - Formats: PEM and DER
 
 Here is a PEM (*P*rivacy *E*nhanced *M*ail) encoded certificate. Let's talk about what we're
 looking at here:
@@ -65,9 +65,9 @@ plain text in it. That binary form is called the DER (*D*istinguished
 and keys were distributed in.
 
 So why PEM? PEM has a couple of advantages, in particular, it's plain
-text, so they can be freely emailed. Being plain text, you can concatinate
+text, so they can be freely emailed. Being plain text, you can concatenate
 a certificate and the corresponding key into the same file and most
-libraries can understand this. It also allows for concatonation of multiple certicates
+libraries can understand this. It also allows for concatenation of multiple certificates
 either as a *bundle* or a *chain* for their various purposes. Particularly,
 PEM format allows for encrypting private keys with a symmetric password-based
 encryption key.
