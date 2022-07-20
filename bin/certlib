@@ -105,8 +105,7 @@ function generatekey {
 	if [ "${ret}" -eq "0" ]; then
 		printf "%s\n" "${output}"
 	else
-		blank
-		die "Key generation failed. Please check your KEY_ALG and KEY_BITS environment variables."
+		die "Key generation failed. Please check your KEY_ALG and either KEY_BITS or KEY_CURVE environment variables."
 	fi
 }
 
