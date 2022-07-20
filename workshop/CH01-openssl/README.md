@@ -20,6 +20,7 @@ by you specify the subcommand immediately after the `openssl` command.
 | `CA` | Performing certificate authority actions |
 | `s_client` | Manually connecting and interacting with a TLS-protected endpoint |
 | `asn1parse` | Packs and unpacks ASN.1 formatted data objects |
+| `verify` | Used to manually verify certificates. |
 
 \* `genpkey` can technically generate any private key using any supported algorithm, but
 its systax is clunky. It is, however, really the only way to generate more obscure EC keys,
