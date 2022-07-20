@@ -75,13 +75,13 @@ encryption key.
 ### Convert PEM to DER
 
 ```bash
-openssl x509 -in example\_certificate.pem -outform DER -out example\_certificate.der
+openssl x509 -in example_certificate.pem -outform DER -out example_certificate.der
 ```
 
 OR
 
 ```bash
-cat example_certificate.pem | grep -v -- --- > example\_certificate.der # this works on keys and other kinds of PEM encoded data
+cat example_certificate.pem | grep -v -- --- > example_certificate.der # this works on keys and other kinds of PEM encoded data
 ```
 
 ### The `file` command is your friend
