@@ -41,7 +41,8 @@ openssl genrsa 2048 -traditional
 ## Generating DSA keys
 
 DSA keys (as well as ECC keys) require parameters to be generated first,
-befor the key can be created. This process can be done separately, or 
+befor the key can be created. This process can be done separately, or in
+a single command.
 
 ### Generate DSA parameters
 
@@ -69,16 +70,24 @@ Again, if you're using a new enough version of `openssl` you might see
 ```
 
 Unfortunately, the `gendsa` command doesn't have a `-traditional` flag, but you
-can get the traditionally formatted DSA key by running it through `openssl dsa`.
+can get the traditionally formatted DSA key by running it through `openssl dsa`
+or `openssl pkcs8 -nocrypt -traditional`.
 
 To generate a DSA key directly, you can pass the `-genkey` parameter
 to `dsaparam`, which will generate the parameters and the key at the same
-time. You can then run it through `dsa` to filter out just the key:
+time. You can then run it through `dsa` to filter out just the key or use the `-noout`
+flag:
 
 ### One-step DSA key generation
 
 ```bash
 openssl dsaparam -genkey 1024 | openssl dsa 2>/dev/null
+```
+
+OR
+
+```bash
+openssl dsaparm -noout -genkey 1024 | openssl pkcs8 -nocrypt -traditional
 ```
 
 ---
@@ -97,5 +106,5 @@ openssl ecparam -list_curves
 ### Generate an ECC key
 
 ```bash
-openssl ecparam -name prime256v1 -noout
+openssl ecparam -name prime256v1 -genkey -noout
 ```
