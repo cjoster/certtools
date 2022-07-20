@@ -1,7 +1,7 @@
 [ req ]
 distinguished_name              = int_req_dn
 default_md                      = sha256
-x509_extensions                 = ca_ext
+x509_extensions                 = int_req_ext
 
 [ int_req_dn ]
 
@@ -29,3 +29,10 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always,issuer
 basicConstraints = critical, CA:true, pathlen: 0
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[ cert_ext ]
+subjectKeyIdentifier    = hash
+authorityKeyIdentifier  = keyid:always,issuer
+basicConstraints        = critical,     CA:false
+keyUsage                =               digitalSignature, keyEncipherment
+extendedKeyUsage        =               serverAuth

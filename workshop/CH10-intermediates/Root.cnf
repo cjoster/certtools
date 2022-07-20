@@ -29,10 +29,3 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always,issuer
 basicConstraints = critical, CA:true, pathlen:1
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-
-[ cert_ext ]
-subjectKeyIdentifier 	= hash
-authorityKeyIdentifier 	= keyid:always,issuer
-basicConstraints 	= critical, 	CA:false
-keyUsage                =               digitalSignature, keyEncipherment
-extendedKeyUsage        =               serverAuth
