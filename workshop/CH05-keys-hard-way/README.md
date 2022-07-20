@@ -1,6 +1,6 @@
 # Generatinig Keys
 
-*If you let your CA create your keys, you are already compromised.*
+**If you let your CA create your keys, you are already compromised.**
 
 Generating keys with openssl is pretty straight forward.
 Pick an algorithm and then possibly a curve and you'll all set.
