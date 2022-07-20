@@ -9,3 +9,4 @@ workshop/CH09-creating-a-ca-certificate/foo.crt
 workshop/CH09-creating-a-ca-certificate/site.csr
 *.swp
 *.swo
+*.bak
