@@ -83,3 +83,29 @@ OR
 ```bash
 cat example_certificate.pem | grep -v -- --- > example\_certificate.der # this works on keys and other kinds of PEM encoded data
 ```
+
+### The `file` command is your friend
+
+Don't be afraid to `cat` certificate material. Worst case, you'll get some binary stuff
+on your terminal. Usually, it'll be PEM encoded and tell you what it is in the first and last
+line.
+
+```
+[cjoster@host CH00-viewing-cryptographic-material]$ file *
+example.csr:    PEM certificate request
+example.key:    PEM RSA private key
+README.md:      ASCII text
+vmware.com.crt: PEM certificate
+
+[cjoster@host CH01-PEM-and-DER]$ file *
+encrypted_key_new.pem: ASCII text
+encrypted_key_old.pem: PEM RSA private key
+example_cert.der:      Certificate, Version=3
+example_cert.pem:      PEM certificate
+example_key.der:       DER Encoded Key Pair, 2048 bits
+example_key.pem:       PEM RSA private key
+README.md:             ASCII text
+```
+
+The whole point of this exercise is to point out that naming something `.pem` is a bit redundant. Name your keys `.key`, your certs `.crt` or `.cer`,
+and your certificate signing requests `.csr`.
