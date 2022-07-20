@@ -85,17 +85,11 @@ This will sign the CSR created in the chapter *CH07-config-files-and-csrs*
 
 ```bash
 issued="$(TZ=UTC date +%Y%m%d%H%M%S)"
-openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -key CA.key -extfile CA.cnf -extensions cert_ext -days 365 -set_serial "0x${serial}" -copy_extensions copy | tee "certs/${issued}-${serial}.crt"
+openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -CA CA.crt -CAkey CA.key -extfile CA.cnf -extensions cert_ext -copy_extensions copy | tee "certs/${issued}-${serial}.crt"
 ```
 
 ### View your certificate
 
 ```bash
 openssl x509 -in "certs/${issued}-${serial}.crt" -text -noout
-```
-
-**Note** More recent versions of OpenSSL have cleaner ways to do this.
-
-```bash
-openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -CA CA.crt -CAkey CA.key -extfile CA.cnf -extensions cert_ext -copy_extensions copy
 ```
