@@ -115,30 +115,28 @@ function cert_extract {
 
 function retrieve_cert {
 
-	[ -n "${1}" ] || die "$0: argument expected"
+	[ -n "${1}" ] || die "$(basename "${0}"): argument expected"
 
-	have_binaries openssl grep
+	have_binaries openssl grep base64 yq
 
-	if [ "${1}" == "-" -o -f "${1}" ]; then
+	if [ -f "${1}" -o "${1}" == "-" ]; then
 		if [ "${1}" == "-" ]; then
-			f="STDIN"
-			input="$(cat)" || die "Error swallowing input on stdin."
-			[ -n "${input}" ]  || die "No input received on stdin."
-		elif input="$(yq eval -e .certificate "${1}" 2>/dev/null| base64 -d)"; then
-			f=".certificate in yaml config file \"${1}\""
-		else
-			f="\"${1}\""
-			input="$(cat "${1}")"
-		fi
-	
-		if [ -n "${RETRIEVE_CHAIN:-}" ]; then
-			cert="$(echo "${input}" | cert_extract)"
-		else
-			if ! cert="$(echo "${input}" | openssl x509 -inform PEM)"; then
-				if ! cert="$(echo "${input}" | openssl x509 -inform DER)"; then
-					die "Openssl could not identify the contets of ${f} as either a PEM encoded or DER encoded certificate."
-				fi
+			input="$(cat | base64)" || die "Error swallowing input on STDIN."
+			f="input received on STDIN"
+			if tmp="$(echo "${input}" | base64 -d | yq eval -e .certificate - 2>/dev/null)"; then
+				input="${tmp}"
 			fi
+		elif input="$(yq eval -e .certificate "${1}" 2>/dev/null)"; then
+			f="the certificate contained in YAML file \"${1}\""
+			#if ! cert="$(echo "${input}" base64 -d | openssl x509 -inform PEM)"; then
+			#	cert="$(echo "${input}" | base64 -d | openssl x509 -inform DER)" || die "Could not identify the certificate in YAML file \"${1}\" as either a PEM or DER encoded certificate."
+			#fi
+		else
+			f="contents of the file \"${1}\""
+			input="$(base64 "${1}")" || die "Could not open file \"${1}\"."
+		fi
+		if ! cert="$(echo "${input}" | base64 -d | openssl x509 -inform PEM 2>/dev/null)"; then
+			cert="$(echo "${input}" | base64 -d | openssl x509 -inform DER 2>/dev/null)" || die "Unable to identify ${f} as either an either PEM or DER encoded file."
 		fi
 		[ -n "${cert}" ] || die "No certificate or chain found."
 	else
