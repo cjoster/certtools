@@ -81,8 +81,10 @@ serial=$(dd if=/dev/random bs=18 count=1 iflag=fullblock 2>/dev/null | xxd -p)
 
 ### Sign the CSR
 
+This will sign the CSR created in the chapter *CH07-config-files-and-csrs*
+
 ```bash
-openssl x509 -req -in site.csr -key CA.key -extfile CA.cnf -extensions cert_ext -days 365 -set_serial "0x${serial}" -copy_extensions copy > "certs/${serial}.crt"
+openssl x509 -req -in ../CH07-config-files-and-csrs/site.csr -key CA.key -extfile CA.cnf -extensions cert_ext -days 365 -set_serial "0x${serial}" -copy_extensions copy > "certs/${serial}.crt"
 ```
 
 ### View your certificate
