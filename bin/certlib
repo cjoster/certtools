@@ -78,9 +78,16 @@ function generatekey {
 
 	have_binaries openssl
 
-	keyalg="${KEY_ALG:-rsa}"
+	local keyalg="${KEY_ALG:-rsa}"
+	local lcase
+	if [ -z "${BASH_VERSINFO[0]:-}" ] || [ "${BASH_VERSINFO[0]}" -lt "4" ]; then
+		have_binaries tr
+		lcase="$(echo "${keyalg}" | tr 'A-Z' 'a-z')"
+	else
+		lcase="${keyalg,,}"
+	fi
 
-	case "${keyalg,,}" in
+	case "${lcase}" in
 		rsa)
 			bits="${KEY_BITS:-2048}"
 			ret=0
