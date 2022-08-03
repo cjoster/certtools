@@ -32,3 +32,11 @@ update-ca-trust
 cp my-ca.crt /etc/ssl/certs
 rehash_ca_certificates.sh
 ```	
+
+### MacOS
+
+```bash
+cp my-ca.crt /private/etc/ssl/certs
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /private/etc/ssl/certs/my-ca.crt
+```	
+Enter your MacOS password when requested and it will add the certificate to Keychain Access. You can verify it by opening Keychain Access, click on *System* from the left menu bar, then click on *Certificates* on the top menu bar. Right click the certificate you imported and select *Get Info* to view the details of the certificate.
