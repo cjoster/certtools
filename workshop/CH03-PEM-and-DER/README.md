@@ -56,7 +56,7 @@ that it's `base64` encoded. Some of you might have even tried to
 base64 decode this, which you can try with:
 
 ```bash
-cat example_certificate.pem | grep -v -- --- | base64 -d
+cat example_cert.pem | grep -v -- --- | base64 -d
 ```
 
 ...and you'll see you get a bunch of binary garbage with some
@@ -75,14 +75,17 @@ encryption key.
 ### Convert PEM to DER
 
 ```bash
-openssl x509 -in example_certificate.pem -outform DER -out example_certificate.der
+openssl x509 -in example_cert.pem -outform DER -out example_cert.der
 ```
 
 OR
 
 ```bash
-cat example_certificate.pem | grep -v -- --- > example_certificate.der # this works on keys and other kinds of PEM encoded data
+cat example_cert.pem | grep -v -- --- | base64 -d > example_cert.der # this works on keys and other kinds of PEM encoded data
 ```
+
+### Convert DER to PEM
+openssl x509 -inform DER -text -in example_cert.der -outform PEM -out example_cert.pem
 
 ### The `file` command is your friend
 
