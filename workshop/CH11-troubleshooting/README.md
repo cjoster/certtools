@@ -15,22 +15,22 @@
 ### Debian, Ubuntu and other debian-based distros
 
 ```bash
-cp my-ca.crt /etc/ssl/certs/
-update-ca-certificates
+sudo cp my-ca.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
 ```
 
 ### Amazon, Fedora, RHEL, Scientific, OEL, etc
 
 ```bash
-cp my-ca.crt /etc/pki/ca-trust/source/anchors/
-update-ca-trust
+sudo cp my-ca.crt /etc/pki/ca-trust/source/anchors/
+sudo update-ca-trust
 ```
 
 ### Photon
 
 ```bash
-cp my-ca.crt /etc/ssl/certs
-rehash_ca_certificates.sh
+sudo cp my-ca.crt /etc/ssl/certs
+sudo rehash_ca_certificates.sh
 ```	
 
 ### MacOS
