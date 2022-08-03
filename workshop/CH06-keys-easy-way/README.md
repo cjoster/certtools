@@ -61,7 +61,7 @@ KEY_ALG=dsa KEY_BITS=2048 new_key
 ## Generating ECC keys
 
 ```bash
-KEY_ALG=ecc new_ksy
+KEY_ALG=ecc new_key
 ```
 
 ```bash
